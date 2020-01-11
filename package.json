@@ -1,0 +1,45 @@
+{
+  "name": "entrystore",
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=10.0"
+  },
+  "description": "A universal entry store",
+  "keywords": [
+    "adapter",
+    "connector",
+    "database",
+    "entry",
+    "interface",
+    "record",
+    "store"
+  ],
+  "homepage": "https://github.com/alvis/entrystore#readme",
+  "bugs": {
+    "url": "https://github.com/alvis/entrystore/issues"
+  },
+  "license": "MIT",
+  "author": "Alvis HT Tang <alvis@hilbert.space>",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "run build",
+    "coverage": "run coverage",
+    "lint": "run lint",
+    "prepare": "presetter bootstrap && run prepare",
+    "prepublishOnly": "run prepublishOnly",
+    "release": "run release --",
+    "test": "run test --",
+    "watch": "run watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvis/entrystore.git"
+  },
+  "devDependencies": {
+    "presetter": "1.x",
+    "presetter-preset": "1.x"
+  },
+  "dependencies": {
+  }
+}
