@@ -1,0 +1,8 @@
+.*
+*.lock
+*.log
+/*.json
+/coverage/
+/lib/
+/source/
+/specs/

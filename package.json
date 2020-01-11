@@ -1,0 +1,70 @@
+{
+	"name": "@alvis/store",
+	"version": "0.0.0",
+	"engines": {
+		"node": "~10.10"
+	},
+	"description": "A simple file store",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"scripts": {
+		"build": "run-s clean lint build:*",
+		"build:typescript": "babel --extensions .ts,.tsx,.d.ts --source-maps --copy-files --out-dir lib ./source",
+		"build:types": "run-s build:types:*",
+		"build:types:declarations": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+		"build:types:path": "tscpaths -p tsconfig.json -s source -o lib",
+		"clean": "run-p clean:**",
+		"clean:lib": "rm -rf lib",
+		"clean:coverage": "rm -rf coverage",
+		"develop": "cross-env-shell NODE_ENV=local ts-node-dev --transpile-only --require tsconfig-paths/register --debounce 250 --respawn --clear --no-notify --tree-kill --dedupe --ignore-watch node_modules -- $@",
+		"lint": "run-s lint:*",
+		"lint:prettier": "prettier --write '**/*.ts'",
+		"lint:fixme": "leasot --skip-unsupported --exit-nicely source specs",
+		"prepare": "run-p prepare:*",
+		"prepare:npm": "run-s test build",
+		"release": "run-p release:*",
+		"release:npm": "standard-version",
+		"test": "jest --config \"$(cat .jestrc)\" --coverage --no-cache --passWithNoTests --verbose",
+		"test:quick": "jest --config \"$(cat .jestrc)\" --coverage=false --no-cache --passWithNoTests --verbose",
+		"test:debug": "jest --config \"$(cat .jestrc)\" --no-cache --passWithNoTests --runInBand"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alvis/store.git"
+	},
+	"keywords": [],
+	"author": "Alvis HT Tang <alvis@hilbert.space>",
+	"bugs": {
+		"url": "https://github.com/alvis/store/issues"
+	},
+	"homepage": "https://github.com/alvis/store#readme",
+	"devDependencies": {
+		"@babel/cli": "^7.7.4",
+		"@babel/core": "^7.7.4",
+		"@babel/plugin-proposal-class-properties": "^7.7.4",
+		"@babel/plugin-proposal-decorators": "^7.7.4",
+		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
+		"@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+		"@babel/plugin-proposal-optional-chaining": "^7.7.4",
+		"@babel/preset-env": "^7.7.4",
+		"@babel/preset-typescript": "^7.7.4",
+		"@types/fs-extra": "^8.0.1",
+		"@types/jest": "^24.0.15",
+		"@types/node": "^12.6.3",
+		"jest": "^24.9.0",
+		"leasot": "^9.3.1",
+		"npm-run-all": "^4.1.0",
+		"prettier": "^1.19.1",
+		"shx": "^0.3.0",
+		"source-map-support": "^0.5.16",
+		"standard-version": "^6.0.1",
+		"ts-jest": "^24.1.0",
+		"ts-node-dev": "^1.0.0-pre.43",
+		"tsconfig-paths": "^3.9.0",
+		"tscpaths": "0.0.9",
+		"tslint": "^5.20.0",
+		"typescript": "^3.7.0"
+	},
+	"dependencies": {
+	}
+}

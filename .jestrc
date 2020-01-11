@@ -1,0 +1,28 @@
+{
+  "bail": true,
+  "collectCoverage": true,
+  "collectCoverageFrom": ["source/**/*.ts?(x)"],
+  "coverageThreshold": {
+    "global": {
+      "branches": 9.5,
+      "functions": 9.5,
+      "lines": 9.5,
+      "statements": 9.5
+    }
+  },
+  "globals": {
+    "ignoreCoverageForAllDecorators": true,
+    "ts-jest": {
+      "tsConfig": {
+        "allowJs": true
+      }
+    }
+  },
+  "moduleNameMapper": {
+    "#(.*)": "<rootDir>/source/$1"
+  },
+  "preset": "ts-jest",
+  "resetModules": true,
+  "roots": ["<rootDir>/specs/"],
+  "testEnvironment": "node"
+}

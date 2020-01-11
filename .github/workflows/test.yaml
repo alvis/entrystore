@@ -1,0 +1,32 @@
+name: continuous integration
+
+on:
+  push:
+    branches:
+      - '**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10, 12]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: use node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-dependencies-${{ hashFiles('package-lock.json') }}
+      - name: install dependencies
+        run: npm ci
+      - name: run test
+        run: npm test
+        env:
+          CI: true
+      - name: run build
+        run: npm run build --if-present
