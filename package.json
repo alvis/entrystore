@@ -66,5 +66,8 @@
 		"typescript": "^3.7.0"
 	},
 	"dependencies": {
+		"csv-parse": "^4.8.2",
+		"csv-stringify": "^5.3.5",
+		"fs-extra": "^8.1.0"
 	}
 }

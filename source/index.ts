@@ -13,3 +13,8 @@
  */
 
 /* istanbul ignore next */
+
+export * from './definitions';
+
+export * from './file';
+export * from './partitioner';
