@@ -1,0 +1,35 @@
+name: release
+
+on:
+  push:
+    branches:
+      - release
+    tags:
+      - v*
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: use node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://npm.pkg.github.com
+      - name: cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-dependencies-${{ hashFiles('package-lock.json') }}
+      - name: install dependencies
+        run: npm ci
+      - name: create release notes
+        run: npx conventional-github-releaser -t ${{ secrets.GITHUB_TOKEN }}
+      - name: release to github package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

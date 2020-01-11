@@ -1,0 +1,169 @@
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+  - plugin:eslint-comments/recommended
+  - plugin:sonarjs/recommended
+  - plugin:jsdoc/recommended
+  - prettier
+env:
+  es6: true
+  node: true
+  jest: true
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: tsconfig.json
+  sourceType: module
+plugins:
+  - '@typescript-eslint'
+  - header
+  - jsdoc
+  - no-secrets
+settings:
+  jsdoc:
+    mode: typescript
+ignorePatterns:
+  - lib
+  - specs
+  - '**/*.js'
+rules:
+  header/header:
+     - error
+     - block
+     - - pattern: Copyright
+  '@typescript-eslint/array-type':
+    - warn
+    - default:  array-simple
+  '@typescript-eslint/class-name-casing': error
+  '@typescript-eslint/explicit-member-accessibility':
+    - error
+    - overrides:
+        constructors: 'no-public'
+  '@typescript-eslint/explicit-function-return-type':
+    - error
+    - allowExpressions: true
+  '@typescript-eslint/interface-name-prefix': error
+  '@typescript-eslint/member-ordering': error
+  '@typescript-eslint/naming-convention': error
+  # '@typescript-eslint/no-base-to-string': error
+  # disabled due to https://github.com/typescript-eslint/typescript-eslint/issues/1655
+  "@typescript-eslint/no-dupe-class-members": error
+  '@typescript-eslint/no-empty-function': warn
+  '@typescript-eslint/no-empty-interface': off
+  '@typescript-eslint/no-explicit-any': off
+  '@typescript-eslint/no-namespace': off
+  '@typescript-eslint/no-parameter-properties': warn
+  '@typescript-eslint/no-useless-constructor': error
+  '@typescript-eslint/no-unnecessary-condition': error
+  '@typescript-eslint/no-unnecessary-qualifier': warn
+  '@typescript-eslint/no-unsafe-member-access': warn
+  '@typescript-eslint/prefer-for-of': warn
+  '@typescript-eslint/prefer-function-type': warn
+  '@typescript-eslint/prefer-nullish-coalescing': warn
+  '@typescript-eslint/prefer-optional-chain': warn
+  '@typescript-eslint/promise-function-async': warn
+  '@typescript-eslint/quotes':
+    - error
+    - single
+  '@typescript-eslint/return-await': error
+  '@typescript-eslint/semi':
+    - warn
+    - always
+  '@typescript-eslint/unbound-method': off
+  '@typescript-eslint/unified-signatures': warn
+  '@typescript-eslint/switch-exhaustiveness-check': error
+  # ECMAScript 6
+  object-shorthand: warn
+  prefer-const:
+    - warn
+    - destructuring: all
+  prefer-destructuring: warn
+  prefer-rest-params: error
+  prefer-spread: error
+  symbol-description: error
+  # Stylistic Issues
+  camelcase: warn
+  capitalized-comments:
+    - warn
+    - never
+    - ignorePattern: '\*|\/|/|\s'
+  eol-last: warn
+  id-match: warn
+  linebreak-style:
+      - warn
+      - unix
+  new-parens: warn
+  one-var:
+      - warn
+      - never
+  spaced-comment: error
+  space-before-function-paren:
+      - warn
+      - anonymous: never
+        named: never
+        asyncArrow: always
+  # Best Practices
+  '@typescript-eslint/require-await': off
+  '@typescript-eslint/no-inferrable-types': off
+  '@typescript-eslint/no-unused-expressions': error
+  sonarjs/no-duplicate-string: off
+  sonarjs/no-small-switch: off
+  sonarjs/prefer-immediate-return: off
+  jsdoc/newline-after-description:
+     - error
+     - never
+  # jsdoc/no-types:
+  #    - off
+  jsdoc/require-description: warn
+  jsdoc/require-param-type: off
+  jsdoc/require-property-type: off
+  jsdoc/require-returns:
+    - error
+    - checkGetters: false
+  jsdoc/require-returns-type: off
+  no-secrets/no-secrets: error
+  array-callback-return: error
+  block-scoped-var: error
+  complexity: warn
+  curly:
+    - error
+    - all
+  default-case: error
+  eqeqeq:  error
+  max-classes-per-file: error
+  no-async-promise-executor: off
+  no-console: warn
+  no-eval: error
+  #no-magic-numbers: off
+  #'@typescript-eslint/no-magic-numbers':
+  #  - error
+  #  - ignore:
+  #      - 0
+  #      - 1
+  #    ignoreArrayIndexes: true
+  #    ignoreNumericLiteralTypes: true
+  #    ignoreReadonlyClassProperties: true
+  #    ignoreEnums: true
+  no-multiple-empty-lines: warn
+  no-param-reassign: error
+  no-sparse-arrays: warn
+  no-template-curly-in-string: warn
+  no-throw-literal: warn
+  no-trailing-spaces: warn
+  no-return-await: warn
+  no-undef-init: warn
+  no-underscore-dangle: warn
+  no-unsafe-finally: warn
+  no-useless-concat: warn
+  no-useless-constructor: warn
+  no-var: error
+  padding-line-between-statements:
+    - warn
+    - blankLine: always
+      prev: '*'
+      next: return
+  prefer-object-spread: warn
+  quote-props:
+    - warn
+    - consistent-as-needed
