@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of types
+ * @summary   Collection of common types
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -13,6 +13,10 @@
  * -------------------------------------------------------------------------
  */
 
-export {};
+/** supported data type */
+export type SupportedDataType = boolean | number | string | Date;
 
-export * from './common';
+/** the maximum superset of all supported entry */
+export interface GenericEntry {
+  [key: string]: SupportedDataType;
+}
