@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   Collection of types
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -15,6 +15,4 @@
 
 /* istanbul ignore file */
 
-export * from './types';
-
-export {};
+export * from './common';
