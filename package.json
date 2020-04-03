@@ -37,6 +37,7 @@
     "url": "git+https://github.com/alvis/entrystore.git"
   },
   "devDependencies": {
+    "@types/async": "3.x",
     "@types/debug": "4.x",
     "@types/fs-extra": "9.x",
     "@types/glob": "7.x",
@@ -47,6 +48,9 @@
     "tmp": "0.2"
   },
   "dependencies": {
+    "async": "3.x",
+    "csv-parse": "4.x",
+    "csv-stringify": "5.x",
     "debug": "4.x",
     "fs-extra": "9.x",
     "glob": "7.x",
