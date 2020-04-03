@@ -64,6 +64,16 @@ export abstract class EntryStore<
   public abstract async get(key: Entry[IndexKey]): Promise<Entry | undefined>;
 
   /**
+   * get a list of entries by its index range
+   * @param _ selection detail
+   * @returns an array of entries fulfilling the requirement
+   */
+  // public abstract async select(_: {
+  //   from: Entry[IndexKey];
+  //   to: Entry[IndexKey];
+  // }): Promise<Entry[] | undefined>;
+
+  /**
    * submit a single entry or entries in bulk
    * @param entries array of entries
    */
