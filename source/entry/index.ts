@@ -16,3 +16,5 @@
 /* istanbul ignore file */
 
 export * from './prototype';
+
+export * from './csv';

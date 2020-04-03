@@ -49,9 +49,11 @@
 		"@babel/plugin-proposal-optional-chaining": "^7.9.0",
 		"@babel/preset-env": "^7.9.0",
 		"@babel/preset-typescript": "^7.9.0",
+		"@types/async": "^3.2.0",
 		"@types/fs-extra": "^8.1.0",
 		"@types/glob": "^7.1.1",
 		"@types/jest": "^25.2.1",
+		"@types/lodash": "^4.14.149",
 		"@types/node": "^13.9.8",
 		"@types/shelljs": "^0.8.7",
 		"@typescript-eslint/eslint-plugin": "^2.26.0",
@@ -73,11 +75,15 @@
 		"tmp-promise": "^2.0.2",
 		"ts-jest": "^25.3.1",
 		"ts-node-dev": "^1.0.0-pre.43",
+		"ts-toolbelt": "^6.3.11",
 		"tsconfig-paths": "^3.9.0",
 		"tscpaths": "0.0.9",
 		"typescript": "^3.8.3"
 	},
 	"dependencies": {
+		"async": "^3.2.0",
+		"csv-parse": "^4.8.8",
+		"csv-stringify": "^5.3.5",
 		"fs-extra": "^9.0.0",
 		"glob": "^7.1.6",
 		"shelljs": "^0.8.3"
