@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   Collection of partitioners
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -15,7 +15,7 @@
 
 /* istanbul ignore file */
 
-export * from './partitioner';
-export * from './storage';
+export * from './prototype';
 
-export {};
+export * from './single';
+export * from './yearmonth';
