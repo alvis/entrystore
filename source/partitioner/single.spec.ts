@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of partitioners
+ * @summary   Tests on SinglePartitioner
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -13,8 +13,21 @@
  * -------------------------------------------------------------------------
  */
 
-/* istanbul ignore file */
+import { SinglePartitioner } from './single';
 
-export * from './prototype';
+import { Partitioner } from './prototype';
 
-export * from './single';
+describe('SinglePartitioner', () => {
+  const partitioner: Partitioner<string> = new SinglePartitioner('single');
+
+  test('getRange', () => {
+    expect(partitioner.getRange([])).toEqual({
+      first: 'single',
+      last: 'single',
+    });
+  });
+
+  test('getPartition', () => {
+    expect(partitioner.getPartition('index')).toEqual('single');
+  });
+});
