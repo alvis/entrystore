@@ -38,12 +38,18 @@
   },
   "devDependencies": {
     "@types/debug": "4.x",
+    "@types/fs-extra": "9.x",
+    "@types/glob": "7.x",
     "@types/lodash": "4.x",
+    "@types/tmp": "0.2",
     "presetter": "1.x",
-    "presetter-preset": "1.x"
+    "presetter-preset": "1.x",
+    "tmp": "0.2"
   },
   "dependencies": {
     "debug": "4.x",
+    "fs-extra": "9.x",
+    "glob": "7.x",
     "jsondiffpatch": "0.4",
     "lodash": "4.x",
     "reflect-metadata": "0.1"
