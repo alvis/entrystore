@@ -63,10 +63,10 @@ const encodedTypeMap: Record<string, TypeIdentifier> = {
 };
 
 const decodedTypeMap: TypeMap = {
-  boolean: { isList: false, type: 'Boolean' },
-  number: { isList: false, type: 'Number' },
-  string: { isList: false, type: 'String' },
-  date: { isList: false, type: 'Date' },
+  boolean: 'Boolean',
+  number: 'Number',
+  string: 'String',
+  date: 'Date',
 };
 
 describe('fn:decodeSchema', () => {
