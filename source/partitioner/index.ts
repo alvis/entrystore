@@ -18,4 +18,5 @@
 export * from './prototype';
 
 export * from './single';
+export * from './size';
 export * from './yearmonth';
