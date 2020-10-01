@@ -18,3 +18,4 @@
 export * from './prototype';
 
 export * from './csv';
+export * from './sqlite';

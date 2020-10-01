@@ -42,6 +42,7 @@
     "@types/fs-extra": "9.x",
     "@types/glob": "7.x",
     "@types/lodash": "4.x",
+    "@types/sqlite3": "3.x",
     "@types/tmp": "0.2",
     "presetter": "1.x",
     "presetter-preset": "1.x",
@@ -56,6 +57,8 @@
     "glob": "7.x",
     "jsondiffpatch": "0.4",
     "lodash": "4.x",
-    "reflect-metadata": "0.1"
+    "reflect-metadata": "0.1",
+    "sqlite": "4.x",
+    "sqlite3": "5.x"
   }
 }
