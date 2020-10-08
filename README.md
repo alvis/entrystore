@@ -58,6 +58,20 @@ await store.put(entry);
 await store.put(...entries);
 ```
 
+## Comparison
+
+#### CSVStore
+
+PROS:
+
+- It can be read by most libraries.
+
+CONS
+
+- Memory consumption could be huge if the incoming data is not all after the last entry.
+  In this case, the store has to read the whole CSV partition and reorder the entries and write.
+- No typing. There is no way to distinguish a number and a string.
+
 ## About
 
 ### License
