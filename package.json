@@ -38,10 +38,14 @@
   },
   "devDependencies": {
     "@types/debug": "4.x",
+    "@types/lodash": "4.x",
     "presetter": "1.x",
     "presetter-preset": "1.x"
   },
   "dependencies": {
-    "debug": "4.x"
+    "debug": "4.x",
+    "jsondiffpatch": "0.4",
+    "lodash": "4.x",
+    "reflect-metadata": "0.1"
   }
 }

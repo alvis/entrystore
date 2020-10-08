@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   MissingSchemaError
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -15,7 +15,13 @@
 
 /* istanbul ignore file */
 
-export * from './schema';
-export * from './types';
+/** error for schema unavailability */
+export class MissingSchemaError extends Error {
+  constructor() {
+    super(
+      `There is no schema available. You must provide an entry prototype for first time initialisation.`,
+    );
 
-export {};
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}

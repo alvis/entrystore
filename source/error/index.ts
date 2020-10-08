@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   Collection of errors
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -15,7 +15,9 @@
 
 /* istanbul ignore file */
 
-export * from './schema';
-export * from './types';
-
-export {};
+export * from './MissingSchema';
+export * from './NonCompliantKey';
+export * from './SchemaMismatched';
+export * from './TypeUndeterminedError';
+export * from './UnsupportedType';
+export * from './Validation';

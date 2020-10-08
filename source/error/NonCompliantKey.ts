@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   NonCompliantKeyError
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -13,9 +13,17 @@
  * -------------------------------------------------------------------------
  */
 
-/* istanbul ignore file */
+/** error for a potentially escaped key */
+export class NonCompliantKeyError extends Error {
+  /**
+   * @param options information about the key
+   * @param options.key name of the key
+   */
+  constructor(options: { key: string | symbol }) {
+    const { key } = options;
 
-export * from './schema';
-export * from './types';
+    super(`Key name ${key.toString()} is not alphanumeric.`);
 
-export {};
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}

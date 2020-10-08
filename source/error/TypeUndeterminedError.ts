@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   TypeUndeterminedError
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -13,9 +13,13 @@
  * -------------------------------------------------------------------------
  */
 
-/* istanbul ignore file */
+/** error for unsupported data type */
+export class TypeUndeterminedError extends Error {
+  constructor() {
+    super(
+      `Failed to determine the type of all data fields. An explicit declaration may be required.`,
+    );
 
-export * from './schema';
-export * from './types';
-
-export {};
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}

@@ -5,7 +5,7 @@
  * See the LICENSE file for details.
  * -------------------------------------------------------------------------
  *
- * @summary   Collection of exports
+ * @summary   UnsupportedTypeError
  *
  * @author    Alvis HT Tang <alvis@hilbert.space>
  * @license   MIT
@@ -13,9 +13,19 @@
  * -------------------------------------------------------------------------
  */
 
-/* istanbul ignore file */
+/** error for data type unsupported */
+export class UnsupportedTypeError extends Error {
+  /**
+   * @param options information about a value
+   * @param options.value the value in question
+   */
+  constructor(options: { value: unknown }) {
+    const { value } = options;
 
-export * from './schema';
-export * from './types';
+    const content = JSON.stringify(value);
 
-export {};
+    super(`Data type in ${content} is unsupported.`);
+
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
