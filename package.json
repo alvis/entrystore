@@ -37,9 +37,11 @@
     "url": "git+https://github.com/alvis/entrystore.git"
   },
   "devDependencies": {
+    "@types/debug": "4.x",
     "presetter": "1.x",
     "presetter-preset": "1.x"
   },
   "dependencies": {
+    "debug": "4.x"
   }
 }
