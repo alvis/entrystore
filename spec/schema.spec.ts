@@ -13,6 +13,8 @@
  * -------------------------------------------------------------------------
  */
 
+import { URL } from 'url';
+
 import {
   NonCompliantKeyError,
   SchemaMismatchedError,
@@ -44,6 +46,8 @@ class Entry extends GenericEntry {
   public string!: string;
   @FIELD({ type: Date })
   public date!: Date;
+  @FIELD({ type: URL })
+  public url!: URL;
 }
 
 const schema = getSchemaFromPrototype(Entry);
@@ -53,6 +57,7 @@ const exampleEntry = {
   number: 0,
   string: 'string',
   date: new Date('2000-01-01T00:00:00z'),
+  url: new URL('https://link'),
 };
 
 const encodedTypeMap: Record<string, TypeIdentifier> = {
@@ -60,6 +65,7 @@ const encodedTypeMap: Record<string, TypeIdentifier> = {
   number: '*Number',
   string: 'String',
   date: 'Date',
+  url: 'URL',
 };
 
 const decodedTypeMap: TypeMap = {
@@ -67,6 +73,7 @@ const decodedTypeMap: TypeMap = {
   number: 'Number',
   string: 'String',
   date: 'Date',
+  url: 'URL',
 };
 
 describe('fn:decodeSchema', () => {

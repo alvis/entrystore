@@ -16,6 +16,7 @@
 import { resolve } from 'path';
 import { Database } from 'sqlite3';
 import { dirSync } from 'tmp';
+import { URL } from 'url';
 import { promisify } from 'util';
 
 import { SQLiteStore } from '#entry';
@@ -57,6 +58,7 @@ describe('cl:SQLiteStore', () => {
       expect(hydrate(0)).toEqual(0);
       expect(hydrate('string')).toEqual('string');
       expect(hydrate(new Date(0))).toEqual(0);
+      expect(hydrate(new URL('https://link/'))).toEqual('https://link/');
 
       expect(
         // @ts-expect-error
@@ -70,6 +72,9 @@ describe('cl:SQLiteStore', () => {
       expect(dehydrate('Number', 0)).toEqual(0);
       expect(dehydrate('String', 'string')).toEqual('string');
       expect(dehydrate('Date', 0)).toEqual(new Date(0));
+      expect(dehydrate('URL', 'https://link/')).toEqual(
+        new URL('https://link/'),
+      );
 
       expect(
         // @ts-expect-error

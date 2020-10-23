@@ -16,6 +16,7 @@
 import { writeFile, readdir, readFile, ensureDir } from 'fs-extra';
 import { resolve } from 'path';
 import { dirSync } from 'tmp';
+import { URL } from 'url';
 
 import { CSVStore } from '#entry';
 import { dehydrate, hydrate } from '#entry/csv/schema';
@@ -70,6 +71,7 @@ describe('cl:CSVStore', () => {
       expect(hydrate(0)).toEqual('0');
       expect(hydrate('string')).toEqual('string');
       expect(hydrate(new Date(0))).toEqual('0');
+      expect(hydrate(new URL('https://link/'))).toEqual('https://link/');
 
       expect(
         // @ts-expect-error
@@ -83,6 +85,9 @@ describe('cl:CSVStore', () => {
       expect(dehydrate('Number', '0')).toEqual(0);
       expect(dehydrate('String', 'string')).toEqual('string');
       expect(dehydrate('Date', '0')).toEqual(new Date(0));
+      expect(dehydrate('URL', 'https://link/')).toEqual(
+        new URL('https://link/'),
+      );
 
       expect(
         // @ts-expect-error

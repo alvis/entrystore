@@ -13,6 +13,8 @@
  * -------------------------------------------------------------------------
  */
 
+import { URL } from 'url';
+
 import { UnsupportedTypeError } from '#error';
 
 import type { GenericEntry, SupportedData, TypeIdentifier } from '#types';
@@ -40,6 +42,8 @@ export function hydrate(value: SupportedData): NativelySupportedDataType {
     return value;
   } else if (value instanceof Date) {
     return value.getTime();
+  } else if (value instanceof URL) {
+    return value.toString();
   }
 
   throw new UnsupportedTypeError({ value });
@@ -63,6 +67,8 @@ export function dehydrate(
     case 'Number':
     case 'String':
       return value;
+    case 'URL':
+      return new URL(value as string);
     default:
       throw new UnsupportedTypeError({ value });
   }

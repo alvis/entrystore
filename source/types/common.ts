@@ -13,6 +13,8 @@
  * -------------------------------------------------------------------------
  */
 
+import { URL } from 'url';
+
 /** the maximum superset of all supported entry */
 export class GenericEntry {
   [field: string]: SupportedData;
@@ -21,7 +23,7 @@ export class GenericEntry {
 /** supported key type */
 export type SupportedKeyType = typeof SupportedKey[number];
 export type SupportedKey = InstanceType<typeof SupportedKey[number]>;
-export const SupportedKey = [Number, String, Date];
+export const SupportedKey = [Number, String, Date, URL];
 
 /** supported data type */
 export type SupportedDataType = typeof SupportedData[number];
@@ -33,7 +35,8 @@ export type GenericTypeIdentifier =
   | 'Boolean'
   | 'Number'
   | 'String'
-  | 'Date';
+  | 'Date'
+  | 'URL';
 export type IndexTypeIdentifier = `*${GenericTypeIdentifier}`
 export type TypeIdentifier = GenericTypeIdentifier | IndexTypeIdentifier;
 

@@ -15,6 +15,7 @@
 
 import 'reflect-metadata';
 import { isEqual, mapValues } from 'lodash';
+import { URL } from 'url';
 
 import {
   NonCompliantKeyError,
@@ -216,6 +217,8 @@ function inferTypeByValue(value: unknown): GenericTypeIdentifier {
     return 'String';
   } else if (value instanceof Date) {
     return 'Date';
+  } else if (value instanceof URL) {
+    return 'URL';
   }
 
   throw new UnsupportedTypeError({ value });
