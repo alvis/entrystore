@@ -61,7 +61,7 @@ export const ENTRY = (options: { key: string }): ClassDecorator => {
  * @returns a property decorator
  */
 export const FIELD = (options?: {
-  type?: SupportedDataType;
+  type?: SupportedDataType | [SupportedDataType];
 }): PropertyDecorator => {
   return (...[target, key]: Parameters<PropertyDecorator>) => {
     ensureKeyCompliant(key);
@@ -75,11 +75,14 @@ export const FIELD = (options?: {
     ensureFieldCompliant(type);
 
     // update the type map
-    const fieldType: Record<string, SupportedDataType> = {
+    const fieldType: TypeMap<GenericEntry, SupportedDataType> = {
       ...((Reflect.getMetadata(FIELDS, target) as
-        | Record<string, SupportedDataType>
+        | TypeMap<GenericEntry, SupportedDataType>
         | undefined) ?? {}),
-      [key]: type,
+      [key]: {
+        type: (Array.isArray(type) ? type[0] : type) as SupportedDataType,
+        isList: Array.isArray(type),
+      },
     };
 
     Reflect.defineMetadata(FIELDS, fieldType, target);
@@ -91,15 +94,19 @@ export const FIELD = (options?: {
  * @param encoded encoded schema
  * @returns the true schema
  */
-export function decodeSchema(encoded: Record<string, string>): Schema {
+export function decodeSchema(encoded: Record<string, TypeIdentifier>): Schema {
   const [index] = Object.entries(encoded)
     .filter(([, value]) => /^\*/.exec(value))
     .map(([key]) => key);
 
-  const map = mapValues(
-    encoded,
-    (value) => value.replace(/^\*/, '') as TypeIdentifier,
-  );
+  const map = mapValues(encoded, (value) => {
+    const isList = !!/\[\w+\]/.exec(value);
+
+    return {
+      isList,
+      type: value.replace(/^\*?\[?(\w+)\]?\??$/, '$1') as GenericTypeIdentifier,
+    };
+  });
 
   return { index, map };
 }
@@ -109,10 +116,12 @@ export function decodeSchema(encoded: Record<string, string>): Schema {
  * @param schema the true schema
  * @returns encoded schema
  */
-export function encodeSchema(schema: Schema): Record<string, string> {
+export function encodeSchema(schema: Schema): Record<string, TypeIdentifier> {
   return mapValues(
     schema.map,
-    (type, field) => (field === schema.index ? '*' : '') + type,
+    ({ isList, type }, field) =>
+      ((field === schema.index ? '*' : '') +
+        (isList ? `[${type}]` : type)) as TypeIdentifier,
   );
 }
 
@@ -135,10 +144,12 @@ export function ensureKeyCompliant(
 export function ensureFieldCompliant(
   type?: unknown,
 ): asserts type is SupportedDataType {
+  const genericType = (Array.isArray(type) ? type[0] : type) as unknown;
+
   if (
     !type ||
     // @ts-expect-error because `includes` expects a value having the same type as SupportedData
-    !SupportedData.includes(type)
+    !SupportedData.includes(genericType)
   ) {
     throw new TypeUndeterminedError();
   }
@@ -172,14 +183,14 @@ export function getSchemaFromPrototype<
 >(prototype: new (...args: any[]) => Entry): Schema<Entry, IndexKey> {
   const index = Reflect.getMetadata(INDEX, prototype.prototype) as IndexKey;
   const map = mapValues(
-    Reflect.getMetadata(FIELDS, prototype.prototype) as Record<
-      keyof Entry,
+    Reflect.getMetadata(FIELDS, prototype.prototype) as TypeMap<
+      Entry,
       SupportedDataType
     >,
     (value) => {
-      ensureFieldCompliant(value);
+      const { type, isList } = value;
 
-      return value.name as TypeIdentifier;
+      return { type: type.name as GenericTypeIdentifier, isList };
     },
   );
 
@@ -199,7 +210,9 @@ export function inferTypeMapFromEntry<Entry extends GenericEntry>(
       throw new NonCompliantKeyError({ key });
     }
 
-    return inferTypeByValue(value);
+    const type = inferTypeByValue(Array.isArray(value) ? value[0] : value);
+
+    return { type, isList: Array.isArray(value) };
   });
 }
 

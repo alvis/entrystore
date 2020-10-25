@@ -17,7 +17,7 @@ import { URL } from 'url';
 
 /** the maximum superset of all supported entry */
 export class GenericEntry {
-  [field: string]: SupportedData;
+  [field: string]: SupportedData | SupportedData[];
 }
 
 /** supported key type */
@@ -38,13 +38,25 @@ export type GenericTypeIdentifier =
   | 'Date'
   | 'URL';
 export type IndexTypeIdentifier = `*${GenericTypeIdentifier}`
-export type TypeIdentifier = GenericTypeIdentifier | IndexTypeIdentifier;
+export type ArrayTypeIdentifier = `[${GenericTypeIdentifier}]`;
+export type TypeIdentifier =
+  | GenericTypeIdentifier
+  | IndexTypeIdentifier
+  | ArrayTypeIdentifier;
+
+/** metadata about a field */
+export interface TypeMeta<Type = GenericTypeIdentifier> {
+  /** data type */
+  type: Type;
+  /** indicate whether it is a list */
+  isList: boolean;
+}
 
 /** type map for a data entry */
 export type TypeMap<
   Entry extends GenericEntry = GenericEntry,
-  Type = TypeIdentifier
-> = Record<keyof Entry, Type>;
+  Type = GenericTypeIdentifier
+> = Record<keyof Entry, TypeMeta<Type>>;
 
 /** schema for a data entry */
 export type Schema<

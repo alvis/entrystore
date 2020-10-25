@@ -17,7 +17,12 @@ import { URL } from 'url';
 
 import { UnsupportedTypeError } from '#error';
 
-import type { GenericEntry, SupportedData, TypeIdentifier } from '#types';
+import type {
+  GenericEntry,
+  GenericTypeIdentifier,
+  SupportedData,
+  TypeMeta,
+} from '#types';
 
 /** supported data type in sqlite */
 type NativelySupportedDataType = boolean | number | string;
@@ -33,7 +38,9 @@ export type NativeEntry<Entry extends GenericEntry> = Record<
  * @param value content to be converted
  * @returns transformed content
  */
-export function hydrate(value: SupportedData): NativelySupportedDataType {
+export function hydrateGeneric(
+  value: SupportedData,
+): NativelySupportedDataType {
   if (typeof value === 'boolean') {
     return value ? 1 : 0;
   } else if (typeof value === 'number') {
@@ -55,8 +62,8 @@ export function hydrate(value: SupportedData): NativelySupportedDataType {
  * @param value the transformed value stored in SQLite
  * @returns the dehydrated value in its original form
  */
-export function dehydrate(
-  type: TypeIdentifier,
+export function dehydrateGeneric(
+  type: GenericTypeIdentifier,
   value: NativelySupportedDataType,
 ): SupportedData {
   switch (type) {
@@ -72,4 +79,38 @@ export function dehydrate(
     default:
       throw new UnsupportedTypeError({ value });
   }
+}
+
+/**
+ * convert a value into a format supported by SQLite
+ * @param value content to be converted
+ * @returns transformed content
+ */
+export function hydrate(
+  value: GenericEntry[keyof GenericEntry],
+): NativelySupportedDataType {
+  return Array.isArray(value)
+    ? JSON.stringify(value.map(hydrateGeneric))
+    : hydrateGeneric(value);
+}
+
+/**
+ * convert a value stored in SQLite back its original form
+ * @param meta detail of the value type
+ * @param value the transformed value stored in SQLite
+ * @returns the dehydrated value in its original form
+ */
+export function dehydrate(
+  meta: TypeMeta,
+  value: NativelySupportedDataType,
+): GenericEntry[keyof GenericEntry] {
+  const { isList, type } = meta;
+
+  return isList
+    ? (JSON.parse(
+        value as string,
+      ) as NativelySupportedDataType[]).map((element) =>
+        dehydrateGeneric(type, element),
+      )
+    : dehydrateGeneric(type, value);
 }

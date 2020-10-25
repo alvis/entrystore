@@ -48,6 +48,8 @@ class Entry extends GenericEntry {
   public date!: Date;
   @FIELD({ type: URL })
   public url!: URL;
+  @FIELD({ type: [URL] })
+  public list!: URL[];
 }
 
 const schema = getSchemaFromPrototype(Entry);
@@ -58,6 +60,7 @@ const exampleEntry = {
   string: 'string',
   date: new Date('2000-01-01T00:00:00z'),
   url: new URL('https://link'),
+  list: [new URL('https://link1'), new URL('https://link2')],
 };
 
 const encodedTypeMap: Record<string, TypeIdentifier> = {
@@ -66,14 +69,16 @@ const encodedTypeMap: Record<string, TypeIdentifier> = {
   string: 'String',
   date: 'Date',
   url: 'URL',
+  list: '[URL]',
 };
 
 const decodedTypeMap: TypeMap = {
-  boolean: 'Boolean',
-  number: 'Number',
-  string: 'String',
-  date: 'Date',
-  url: 'URL',
+  boolean: { isList: false, type: 'Boolean' },
+  number: { isList: false, type: 'Number' },
+  string: { isList: false, type: 'String' },
+  date: { isList: false, type: 'Date' },
+  url: { isList: false, type: 'URL' },
+  list: { isList: true, type: 'URL' },
 };
 
 describe('fn:decodeSchema', () => {
@@ -127,7 +132,10 @@ describe('ensureSchemaAgreed', () => {
 
   it('should throw an error when two schema do not agree', async () => {
     expect(() =>
-      ensureSchemaAgreed(schema, { index: 'key', map: { key: 'Number' } }),
+      ensureSchemaAgreed(schema, {
+        index: 'key',
+        map: { key: { isList: false, type: 'Number' } },
+      }),
     ).toThrow(SchemaMismatchedError);
   });
 });
