@@ -23,13 +23,13 @@ import { dehydrate, hydrate } from '#entry/csv/schema';
 import {
   MissingSchemaError,
   SchemaMismatchedError,
-  UnsupportedTypeError,
   ValidationError,
 } from '#error';
 import { YearMonthPartitioner } from '#partitioner';
 import { encodeSchema, getSchemaFromPrototype } from '#schema';
 import { LocalStorage } from '#storage';
 import { jan1, jan2, jan3, feb1, feb2, Entry, AnotherEntry } from './examples';
+import { meta, testSchema } from './schema';
 
 import type { GenericEntry, SupportedKey } from '#types';
 
@@ -64,50 +64,23 @@ function getStore<E extends GenericEntry>(options: {
 }
 
 describe('cl:CSVStore', () => {
-  describe('schema', () => {
-    it('hydrates supported data into the natively supported form', async () => {
-      expect(hydrate(false)).toEqual('0');
-      expect(hydrate(true)).toEqual('1');
-      expect(hydrate(0)).toEqual('0');
-      expect(hydrate('string')).toEqual('string');
-      expect(hydrate(new Date(0))).toEqual('0');
-      expect(hydrate(new URL('https://link/'))).toEqual('https://link/');
-      expect(
-        hydrate([new URL('https://link1/'), new URL('https://link2/')]),
-      ).toEqual('["https://link1/","https://link2/"]');
-
-      expect(
-        // @ts-expect-error
-        () => hydrate({ nested: { message: 'unsupported' } }),
-      ).toThrow(UnsupportedTypeError);
-    });
-
-    it('dehydrates a content stored in the native form back to its original form', async () => {
-      expect(dehydrate({ isList: false, type: 'Boolean' }, '0')).toEqual(false);
-      expect(dehydrate({ isList: false, type: 'Boolean' }, '1')).toEqual(true);
-      expect(dehydrate({ isList: false, type: 'Number' }, '0')).toEqual(0);
-      expect(dehydrate({ isList: false, type: 'String' }, 'string')).toEqual(
-        'string',
-      );
-      expect(dehydrate({ isList: false, type: 'Date' }, '0')).toEqual(
-        new Date(0),
-      );
-      expect(
-        dehydrate({ isList: false, type: 'URL' }, 'https://link/'),
-      ).toEqual(new URL('https://link/'));
-      expect(
-        dehydrate(
-          { isList: true, type: 'URL' },
-          '["https://link1/","https://link2/"]',
-        ),
-      ).toEqual([new URL('https://link1/'), new URL('https://link2/')]);
-
-      expect(
-        // @ts-expect-error
-        () => hydrate({ nested: { message: 'unsupported' } }),
-      ).toThrow(UnsupportedTypeError);
-    });
-  });
+  testSchema(hydrate, dehydrate, [
+    { meta: meta('Boolean'), original: false, hydrated: '0' },
+    { meta: meta('Boolean'), original: true, hydrated: '1' },
+    { meta: meta('Number'), original: 0, hydrated: '0' },
+    { meta: meta('String'), original: 'string', hydrated: 'string' },
+    { meta: meta('Date'), original: new Date(0), hydrated: '0' },
+    {
+      meta: meta('URL'),
+      original: new URL('https://link/'),
+      hydrated: 'https://link/',
+    },
+    {
+      meta: meta('URL', { isList: true }),
+      original: [new URL('https://link1/'), new URL('https://link2/')],
+      hydrated: '["https://link1/","https://link2/"]',
+    },
+  ]);
 
   describe('empty store', () => {
     const { store } = getStore({ identifier: 'empty', prototype: Entry });
