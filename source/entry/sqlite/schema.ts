@@ -16,6 +16,7 @@
 import { URL } from 'url';
 
 import { UnsupportedTypeError } from '#error';
+import { isJSON } from '#schema';
 
 import type {
   GenericEntry,
@@ -51,6 +52,8 @@ export function hydrateGeneric(
     return value.getTime();
   } else if (value instanceof URL) {
     return value.toString();
+  } else if (isJSON(value)) {
+    return JSON.stringify(value);
   }
 
   throw new UnsupportedTypeError({ value });
@@ -71,6 +74,8 @@ export function dehydrateGeneric(
       return !!value;
     case 'Date':
       return new Date(value as number);
+    case 'Embedded':
+      return JSON.parse(value as string) as GenericEntry;
     case 'Number':
     case 'String':
       return value;

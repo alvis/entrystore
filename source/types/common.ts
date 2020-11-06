@@ -26,8 +26,12 @@ export type SupportedKey = InstanceType<typeof SupportedKey[number]>;
 export const SupportedKey = [Number, String, Date, URL];
 
 /** supported data type */
-export type SupportedDataType = typeof SupportedData[number];
-export type SupportedData = InstanceType<SupportedDataType>;
+export type SupportedDataType =
+  | typeof SupportedData[number]
+  | typeof GenericEntry;
+export type SupportedData =
+  | InstanceType<typeof SupportedData[number]>
+  | GenericEntry;
 export const SupportedData = [...SupportedKey, Boolean];
 
 /** identifiers of data types to be stored in the schema table  */
@@ -36,7 +40,8 @@ export type GenericTypeIdentifier =
   | 'Number'
   | 'String'
   | 'Date'
-  | 'URL';
+  | 'URL'
+  | 'Embedded';
 export type IndexTypeIdentifier = `*${GenericTypeIdentifier}`
 export type ArrayTypeIdentifier = `[${GenericTypeIdentifier}]`;
 export type TypeIdentifier =

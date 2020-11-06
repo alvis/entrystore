@@ -50,6 +50,8 @@ class Entry extends GenericEntry {
   public url!: URL;
   @FIELD({ type: [URL] })
   public list!: URL[];
+  @FIELD({ type: GenericEntry })
+  public embedded!: GenericEntry;
 }
 
 const schema = getSchemaFromPrototype(Entry);
@@ -61,6 +63,7 @@ const exampleEntry = {
   date: new Date('2000-01-01T00:00:00z'),
   url: new URL('https://link'),
   list: [new URL('https://link1'), new URL('https://link2')],
+  embedded: { nested: true },
 };
 
 const encodedTypeMap: Record<string, TypeIdentifier> = {
@@ -70,6 +73,7 @@ const encodedTypeMap: Record<string, TypeIdentifier> = {
   date: 'Date',
   url: 'URL',
   list: '[URL]',
+  embedded: 'Embedded',
 };
 
 const decodedTypeMap: TypeMap = {
@@ -79,6 +83,7 @@ const decodedTypeMap: TypeMap = {
   date: { isList: false, type: 'Date' },
   url: { isList: false, type: 'URL' },
   list: { isList: true, type: 'URL' },
+  embedded: { isList: false, type: 'Embedded' },
 };
 
 describe('fn:decodeSchema', () => {
@@ -111,6 +116,10 @@ describe('fn:ensureValueCompliant', () => {
     for (const supported of SupportedData) {
       expect(() => ensureFieldCompliant(supported)).not.toThrow();
     }
+  });
+
+  it('allows an embedded entity', () => {
+    expect(() => ensureFieldCompliant(Entry)).not.toThrow();
   });
 
   it('throws an error for any unsupported data passed', () => {

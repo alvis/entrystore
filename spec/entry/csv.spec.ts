@@ -80,6 +80,11 @@ describe('cl:CSVStore', () => {
       original: [new URL('https://link1/'), new URL('https://link2/')],
       hydrated: '["https://link1/","https://link2/"]',
     },
+    {
+      meta: meta('Embedded'),
+      original: { string: 'string' },
+      hydrated: '{"string":"string"}',
+    },
   ]);
 
   describe('empty store', () => {

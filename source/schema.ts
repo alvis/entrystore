@@ -149,7 +149,7 @@ export function ensureFieldCompliant(
   if (
     !type ||
     // @ts-expect-error because `includes` expects a value having the same type as SupportedData
-    !SupportedData.includes(genericType)
+    !(SupportedData.includes(genericType) || isGenericEntry(genericType))
   ) {
     throw new TypeUndeterminedError();
   }
@@ -190,7 +190,11 @@ export function getSchemaFromPrototype<
     (value) => {
       const { type, isList } = value;
 
-      return { type: type.name as GenericTypeIdentifier, isList };
+      const identifier = isGenericEntry(type)
+        ? 'Embedded'
+        : (type.name as GenericTypeIdentifier);
+
+      return { type: identifier, isList };
     },
   );
 
@@ -232,9 +236,35 @@ function inferTypeByValue(value: unknown): GenericTypeIdentifier {
     return 'Date';
   } else if (value instanceof URL) {
     return 'URL';
+  } else if (isJSON(value)) {
+    return 'Embedded';
   }
 
   throw new UnsupportedTypeError({ value });
+}
+
+/**
+ * check if the given type is an extension of GenericEntry
+ * @param value the class of the value
+ * @returns true if the value is a GenericEntry
+ */
+export function isGenericEntry(value: unknown): boolean {
+  return (
+    value === GenericEntry ||
+    (typeof value === 'function' && value.prototype instanceof GenericEntry)
+  );
+}
+
+/**
+ * check if the given value is compatible to JSON
+ * @param value the value to be tested
+ * @returns true if the value is JSON compatible
+ */
+export function isJSON(value: unknown): boolean {
+  return (
+    typeof value === 'object' &&
+    isEqual(value, JSON.parse(JSON.stringify(value)))
+  );
 }
 
 /**
