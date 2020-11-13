@@ -26,7 +26,7 @@ import type {
 } from '#types';
 
 /** supported data type in sqlite */
-type NativelySupportedDataType = boolean | number | string;
+type NativelySupportedDataType = boolean | number | string | null;
 
 /** entry structure stored in CSV format */
 export type NativeEntry<Entry extends GenericEntry> = Record<
@@ -52,6 +52,8 @@ export function hydrateGeneric(
     return value.getTime();
   } else if (value instanceof URL) {
     return value.toString();
+  } else if (value === null) {
+    return null;
   } else if (isJSON(value)) {
     return JSON.stringify(value);
   }
@@ -67,8 +69,8 @@ export function hydrateGeneric(
  */
 export function dehydrateGeneric(
   type: GenericTypeIdentifier,
-  value: NativelySupportedDataType,
-): SupportedData {
+  value: Exclude<NativelySupportedDataType, null>,
+): Exclude<SupportedData, null> {
   switch (type) {
     case 'Boolean':
       return !!value;
@@ -109,13 +111,15 @@ export function dehydrate(
   meta: TypeMeta,
   value: NativelySupportedDataType,
 ): GenericEntry[keyof GenericEntry] {
+  if (value === null) {
+    return null;
+  }
+
   const { isList, type } = meta;
 
   return isList
-    ? (JSON.parse(
-        value as string,
-      ) as NativelySupportedDataType[]).map((element) =>
-        dehydrateGeneric(type, element),
-      )
+    ? (JSON.parse(value as string) as Array<
+        Exclude<NativelySupportedDataType, null>
+      >).map((element) => dehydrateGeneric(type, element))
     : dehydrateGeneric(type, value);
 }

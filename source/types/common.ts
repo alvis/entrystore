@@ -17,7 +17,7 @@ import { URL } from 'url';
 
 /** the maximum superset of all supported entry */
 export class GenericEntry {
-  [field: string]: SupportedData | SupportedData[];
+  [field: string]: SupportedData | Array<Exclude<SupportedData, null>>;
 }
 
 /** supported key type */
@@ -31,7 +31,8 @@ export type SupportedDataType =
   | typeof GenericEntry;
 export type SupportedData =
   | InstanceType<typeof SupportedData[number]>
-  | GenericEntry;
+  | GenericEntry
+  | null;
 export const SupportedData = [...SupportedKey, Boolean];
 
 /** identifiers of data types to be stored in the schema table  */
@@ -41,13 +42,22 @@ export type GenericTypeIdentifier =
   | 'String'
   | 'Date'
   | 'URL'
-  | 'Embedded';
-export type IndexTypeIdentifier = `*${GenericTypeIdentifier}`
-export type ArrayTypeIdentifier = `[${GenericTypeIdentifier}]`;
-export type TypeIdentifier =
-  | GenericTypeIdentifier
-  | IndexTypeIdentifier
-  | ArrayTypeIdentifier;
+  | 'Embedded'
+  | 'Nullable';
+export type IndexTypeIdentifier = `*${Exclude<
+  GenericTypeIdentifier,
+  'Nullable'
+>}`;
+export type ArrayTypeIdentifier = `[${Exclude<
+  GenericTypeIdentifier,
+  'Nullable'
+>}]`;
+export type NonNullableTypeIdentifier = Exclude<
+  GenericTypeIdentifier | IndexTypeIdentifier | ArrayTypeIdentifier,
+  'Nullable'
+>;
+export type NullableTypeIdentifier = `${NonNullableTypeIdentifier}?`;
+export type TypeIdentifier = NonNullableTypeIdentifier | NullableTypeIdentifier;
 
 /** metadata about a field */
 export interface TypeMeta<Type = GenericTypeIdentifier> {
@@ -55,6 +65,8 @@ export interface TypeMeta<Type = GenericTypeIdentifier> {
   type: Type;
   /** indicate whether it is a list */
   isList: boolean;
+  /** indicate whether it is nullable */
+  isNullable: boolean;
 }
 
 /** type map for a data entry */

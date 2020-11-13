@@ -85,6 +85,11 @@ describe('cl:CSVStore', () => {
       original: { string: 'string' },
       hydrated: '{"string":"string"}',
     },
+    {
+      meta: meta('Number', { isNullable: true }),
+      original: null,
+      hydrated: '',
+    },
   ]);
 
   describe('empty store', () => {

@@ -52,6 +52,8 @@ class Entry extends GenericEntry {
   public list!: URL[];
   @FIELD({ type: GenericEntry })
   public embedded!: GenericEntry;
+  @FIELD({ type: String, nullable: true })
+  public nullable!: string | null;
 }
 
 const schema = getSchemaFromPrototype(Entry);
@@ -64,6 +66,7 @@ const exampleEntry = {
   url: new URL('https://link'),
   list: [new URL('https://link1'), new URL('https://link2')],
   embedded: { nested: true },
+  nullable: '',
 };
 
 const encodedTypeMap: Record<string, TypeIdentifier> = {
@@ -74,16 +77,18 @@ const encodedTypeMap: Record<string, TypeIdentifier> = {
   url: 'URL',
   list: '[URL]',
   embedded: 'Embedded',
+  nullable: 'String?',
 };
 
 const decodedTypeMap: TypeMap = {
-  boolean: { isList: false, type: 'Boolean' },
-  number: { isList: false, type: 'Number' },
-  string: { isList: false, type: 'String' },
-  date: { isList: false, type: 'Date' },
-  url: { isList: false, type: 'URL' },
-  list: { isList: true, type: 'URL' },
-  embedded: { isList: false, type: 'Embedded' },
+  boolean: { isList: false, isNullable: false, type: 'Boolean' },
+  number: { isList: false, isNullable: false, type: 'Number' },
+  string: { isList: false, isNullable: false, type: 'String' },
+  date: { isList: false, isNullable: false, type: 'Date' },
+  url: { isList: false, isNullable: false, type: 'URL' },
+  list: { isList: true, isNullable: false, type: 'URL' },
+  embedded: { isList: false, isNullable: false, type: 'Embedded' },
+  nullable: { isList: false, isNullable: true, type: 'String' },
 };
 
 describe('fn:decodeSchema', () => {
@@ -143,7 +148,7 @@ describe('ensureSchemaAgreed', () => {
     expect(() =>
       ensureSchemaAgreed(schema, {
         index: 'key',
-        map: { key: { isList: false, type: 'Number' } },
+        map: { key: { isList: false, isNullable: false, type: 'Number' } },
       }),
     ).toThrow(SchemaMismatchedError);
   });
@@ -160,7 +165,10 @@ describe('getSchemaFromPrototype', () => {
 
 describe('getTypeMapFromEntry', () => {
   it('should return the right schema from an entry', async () => {
-    expect(inferTypeMapFromEntry(exampleEntry)).toEqual(decodedTypeMap);
+    expect(inferTypeMapFromEntry({ ...exampleEntry, nullable: null })).toEqual({
+      ...decodedTypeMap,
+      nullable: { isList: false, isNullable: true, type: 'Nullable' },
+    });
   });
 
   it('should throw an error for entry containing an unsupported data type', async () => {
@@ -185,12 +193,24 @@ describe('validate', () => {
     );
   });
 
+  it('should pass when a nullable value is given', async () => {
+    expect(() =>
+      validate(schema.map, { ...exampleEntry, nullable: null }),
+    ).not.toThrow(ValidationError);
+  });
+
   it('should throw an error when the entry is different from the schema', async () => {
     expect(() =>
       validate(schema.map, {
         // should be a Date, but given a string here
         date: new Date().toISOString(),
       }),
+    ).toThrow(ValidationError);
+  });
+
+  it('should throw an error when a non-nullable value is given as null', async () => {
+    expect(() =>
+      validate(schema.map, { ...exampleEntry, string: null }),
     ).toThrow(ValidationError);
   });
 });

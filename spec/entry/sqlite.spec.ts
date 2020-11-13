@@ -68,9 +68,14 @@ describe('cl:SQLiteStore', () => {
       hydrated: '["https://link1/","https://link2/"]',
     },
     {
-      meta: { isList: false, type: 'Embedded' },
+      meta: meta('Embedded'),
       original: { string: 'string' },
       hydrated: '{"string":"string"}',
+    },
+    {
+      meta: meta('Number', { isNullable: true }),
+      original: null,
+      hydrated: null,
     },
   ]);
 

@@ -53,6 +53,8 @@ export function hydrateGeneric(
     return (value.getTime() / MILLISECONDS).toString();
   } else if (value instanceof URL) {
     return value.toString();
+  } else if (value === null) {
+    return '';
   } else if (isJSON(value)) {
     return JSON.stringify(value);
   }
@@ -69,7 +71,7 @@ export function hydrateGeneric(
 export function dehydrateGeneric(
   type: GenericTypeIdentifier,
   value: NativelySupportedDataType,
-): SupportedData {
+): Exclude<SupportedData, null> {
   switch (type) {
     case 'Boolean':
       return !!parseInt(value);
@@ -111,6 +113,10 @@ export function dehydrate(
   meta: TypeMeta,
   value: NativelySupportedDataType,
 ): GenericEntry[keyof GenericEntry] {
+  if (value === '') {
+    return null;
+  }
+
   const { isList, type } = meta;
 
   return isList

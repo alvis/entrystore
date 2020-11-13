@@ -14,7 +14,7 @@
  */
 
 import 'reflect-metadata';
-import { isEqual, mapValues } from 'lodash';
+import { isEqual, isEqualWith, mapValues } from 'lodash';
 import { URL } from 'url';
 
 import {
@@ -58,13 +58,17 @@ export const ENTRY = (options: { key: string }): ClassDecorator => {
  * declare a field in an entry prototype
  * @param options information about the field
  * @param options.type data type (Number, String etc.)
+ * @param options.nullable indicate whether the field is nullable
  * @returns a property decorator
  */
 export const FIELD = (options?: {
   type?: SupportedDataType | [SupportedDataType];
+  nullable?: boolean;
 }): PropertyDecorator => {
   return (...[target, key]: Parameters<PropertyDecorator>) => {
     ensureKeyCompliant(key);
+
+    const { nullable = false } = { ...options };
 
     const type =
       options?.type ??
@@ -82,6 +86,7 @@ export const FIELD = (options?: {
       [key]: {
         type: (Array.isArray(type) ? type[0] : type) as SupportedDataType,
         isList: Array.isArray(type),
+        isNullable: nullable,
       },
     };
 
@@ -101,9 +106,11 @@ export function decodeSchema(encoded: Record<string, TypeIdentifier>): Schema {
 
   const map = mapValues(encoded, (value) => {
     const isList = !!/\[\w+\]/.exec(value);
+    const isNullable = !!/\?$/.exec(value);
 
     return {
       isList,
+      isNullable,
       type: value.replace(/^\*?\[?(\w+)\]?\??$/, '$1') as GenericTypeIdentifier,
     };
   });
@@ -119,9 +126,10 @@ export function decodeSchema(encoded: Record<string, TypeIdentifier>): Schema {
 export function encodeSchema(schema: Schema): Record<string, TypeIdentifier> {
   return mapValues(
     schema.map,
-    ({ isList, type }, field) =>
+    ({ isList, isNullable, type }, field) =>
       ((field === schema.index ? '*' : '') +
-        (isList ? `[${type}]` : type)) as TypeIdentifier,
+        (isList ? `[${type}]` : type) +
+        (isNullable ? '?' : '')) as TypeIdentifier,
   );
 }
 
@@ -188,13 +196,13 @@ export function getSchemaFromPrototype<
       SupportedDataType
     >,
     (value) => {
-      const { type, isList } = value;
+      const { type, isList, isNullable } = value;
 
       const identifier = isGenericEntry(type)
         ? 'Embedded'
         : (type.name as GenericTypeIdentifier);
 
-      return { type: identifier, isList };
+      return { type: identifier, isList, isNullable };
     },
   );
 
@@ -216,7 +224,7 @@ export function inferTypeMapFromEntry<Entry extends GenericEntry>(
 
     const type = inferTypeByValue(Array.isArray(value) ? value[0] : value);
 
-    return { type, isList: Array.isArray(value) };
+    return { type, isList: Array.isArray(value), isNullable: value === null };
   });
 }
 
@@ -225,7 +233,7 @@ export function inferTypeMapFromEntry<Entry extends GenericEntry>(
  * @param value the value to be inferred
  * @returns the identifier of the value type
  */
-function inferTypeByValue(value: unknown): GenericTypeIdentifier {
+function inferTypeByValue(value: unknown): GenericTypeIdentifier | 'Nullable' {
   if (typeof value === 'boolean') {
     return 'Boolean';
   } else if (typeof value === 'number') {
@@ -236,6 +244,8 @@ function inferTypeByValue(value: unknown): GenericTypeIdentifier {
     return 'Date';
   } else if (value instanceof URL) {
     return 'URL';
+  } else if (value === null) {
+    return 'Nullable';
   } else if (isJSON(value)) {
     return 'Embedded';
   }
@@ -275,7 +285,22 @@ export function isJSON(value: unknown): boolean {
 export function validate(typeMap: TypeMap, entry: GenericEntry): void {
   const derived = inferTypeMapFromEntry(entry);
 
-  if (!isEqual(typeMap, derived)) {
+  if (
+    !isEqualWith(
+      typeMap,
+      derived,
+      (expectedMeta: TypeMap[string], derivedMeta: TypeMap[string]) =>
+        // either completely identical
+        isEqual(expectedMeta, derivedMeta) ||
+        // or a false alarm on isNullable as any value in the right type cannot be detected as a nullable
+        (expectedMeta.isNullable &&
+          (isEqual({ ...expectedMeta, isNullable: false }, derivedMeta) ||
+            isEqual(
+              { type: 'Nullable', isList: false, isNullable: true },
+              derivedMeta,
+            ))),
+    )
+  ) {
     throw new ValidationError({
       entry,
       typeMap: {
