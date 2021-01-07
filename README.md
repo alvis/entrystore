@@ -58,6 +58,34 @@ await store.put(entry);
 await store.put(...entries);
 ```
 
+## Schema
+
+#### Supported Data Type
+
+A data type is identified with the following
+
+- `Boolean` for any boolean data, i.e. `true` or `false`
+- `Number` for any numberic data, e.g. `1`, `1.1`
+- `String` 
+- `Date`
+- `URL`
+- `Embedded` for any nested data, e.g. `{"nested": true}`
+
+**Note** There is no further type definition for any embdedded data.
+It's equalvant to the `Record<string, unknown>` type in typescript.
+
+#### Index
+
+Any index is decorated with a `*` in front of a type identifier. e.g. `*Number`
+
+#### Array Type
+
+Any array data must be in a uniform type. Its schema identifier is in the form of `[<TypeIdentifier>]`. e.g. `[String]`
+
+#### Nullable Type
+
+Any non-index type can be nullable. In such case, its schema identifier is decorated with a `?` suffix. e.g. `Number?`
+
 ## Comparison
 
 #### CSVStore
