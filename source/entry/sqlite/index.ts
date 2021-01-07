@@ -14,7 +14,7 @@
  */
 
 import { queue } from 'async';
-import { chunk } from 'lodash';
+import { chunk, isEqual } from 'lodash';
 import { basename } from 'path';
 import { mapValues } from 'lodash';
 import { open } from 'sqlite';
@@ -284,7 +284,35 @@ export class SQLiteStore<
         'SELECT * FROM schema',
       );
 
-      return encoded && decodeSchema(encoded);
+      /* ----- section ----- */
+
+      if (encoded) {
+        const compatiable = mapValues(encoded, (value) =>
+          value.includes('!') ? `*${value.replace('!', '')}` : value,
+        ) as typeof encoded;
+
+        const schema = decodeSchema(compatiable);
+        if (!isEqual(compatiable, encoded)) {
+          const definitions = Object.keys(schema.map).map(
+            (key) => `${key} TEXT`,
+          );
+
+          await db.run(`DELETE FROM schema`);
+
+          await db.run(
+            `INSERT INTO schema
+          (${Object.keys(schema.map).join()})
+          VALUES (${definitions.map((_) => '?').join()})`,
+            ...Object.values(encodeSchema(schema)),
+          );
+        }
+
+        return schema;
+      }
+      // ---------------------------------------- //
+
+      return undefined;
+      // return encoded && decodeSchema(encoded);
     } catch {
       // if the table doesn't exist
       return undefined;
